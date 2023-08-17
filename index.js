@@ -3,6 +3,8 @@ const helmet = require("helmet");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const authRouter = require("./routers/authRouter");
+const session = require("express-session");
+require("dotenv").config();
 
 const app = express();
 const server = require("http").createServer(app);
@@ -22,11 +24,22 @@ app.use(
   })
 );
 app.use(express.json());
-app.use("/auth", authRouter);
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET,
+    credentials: true,
+    name: "sid",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.ENVIRONMENT === "production" ? "true" : "auto",
+      httpOnly: true,
+      sameSite: process.env.ENVIRONMENT === "production" ? "none" : "lax",
+    },
+  })
+);
 
-// app.get("/", (req, res) => {
-//   res.json("hi");
-// });
+app.use("/auth", authRouter);
 
 io.on("connect", (socket) => {});
 
