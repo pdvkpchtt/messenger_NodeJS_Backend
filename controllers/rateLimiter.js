@@ -1,7 +1,8 @@
 const redisClient = require("../redis");
 
 module.exports.rateLimiter =
-  (secondsLimit, limitAmount) => async (req, res, next) => {
+  (secondsLimit = 30, limitAmount = 4) =>
+  async (req, res, next) => {
     const ip = req.connection.remoteAddress;
 
     const [response] = await redisClient
@@ -13,6 +14,6 @@ module.exports.rateLimiter =
     console.log(response);
 
     if (response[1] > limitAmount)
-      req.json({ loggedIn: false, satus: "Try again in a 60 sec" });
+      res.json({ loggedIn: false, satus: "Try again in a 60 sec" });
     else next();
   };

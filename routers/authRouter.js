@@ -12,7 +12,7 @@ router
 router.post(
   "/register",
   validateForm,
-  rateLimiter,
+  rateLimiter(30, 4),
   authController.attemptRegister
 );
 
