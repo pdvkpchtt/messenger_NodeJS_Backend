@@ -1,9 +1,9 @@
-const session = require("express-session");
-const RedisStore = require("connect-redis").default;
 const redisClient = require("../redis");
 require("dotenv").config();
+const session = require("express-session");
+const RedisStore = require("connect-redis").default;
 
-const sessionMidleware = session({
+const sessionMiddleware = session({
   secret: process.env.COOKIE_SECRET,
   credentials: true,
   name: "sid",
@@ -11,10 +11,10 @@ const sessionMidleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENVIRONMENT === "production" ? "true" : "auto",
+    secure: process.env.NODE_ENV === "production" ? "true" : "auto",
     httpOnly: true,
     expires: 1000 * 60 * 60 * 24 * 7,
-    sameSite: process.env.NODE_ENVIRONMENT === "production" ? "none" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   },
 });
 
@@ -26,4 +26,4 @@ const corsConfig = {
   credentials: true,
 };
 
-module.exports = { sessionMidleware, wrap, corsConfig };
+module.exports = { sessionMiddleware, wrap, corsConfig };
